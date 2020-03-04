@@ -20,7 +20,9 @@ package org.aopalliance.aop;
  * Superclass for all AOP infrastructure exceptions.
  * Unchecked, as such exceptions are fatal and end user
  * code shouldn't be forced to catch them.
- * 
+ *
+ * AOP 框架的异常基类
+ *
  * @author Rod Johnson
  * @author Bob Lee
  * @author Juergen Hoeller
