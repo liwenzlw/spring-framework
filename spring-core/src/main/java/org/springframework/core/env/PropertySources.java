@@ -21,6 +21,8 @@ import org.springframework.lang.Nullable;
 /**
  * Holder containing one or more {@link PropertySource} objects.
  *
+ * PropertySource的容器
+ *
  * @author Chris Beams
  * @since 3.1
  * @see PropertySource

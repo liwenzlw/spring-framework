@@ -23,23 +23,32 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 
 /**
+ * 解读命令行参数中的属性
  * Abstract base class for {@link PropertySource} implementations backed by command line
  * arguments. The parameterized type {@code T} represents the underlying source of command
  * line options. This may be as simple as a String array in the case of
  * {@link SimpleCommandLinePropertySource}, or specific to a particular API such as JOpt's
  * {@code OptionSet} in the case of {@link JOptCommandLinePropertySource}.
  *
- * <h3>Purpose and General Usage</h3>
+ * <h3>Purpose and General Usage 目的和用法</h3>
  *
  * For use in standalone Spring-based applications, i.e. those that are bootstrapped via
  * a traditional {@code main} method accepting a {@code String[]} of arguments from the
- * command line. In many cases, processing command-line arguments directly within the
+ * command line.In many cases, processing command-line arguments directly within the
  * {@code main} method may be sufficient, but in other cases, it may be desirable to
- * inject arguments as values into Spring beans. It is this latter set of cases in which
+ * inject arguments as values into Spring beans.
+ *
+ * It is this latter set of cases in which
  * a {@code CommandLinePropertySource} becomes useful. A {@code CommandLinePropertySource}
  * will typically be added to the {@link Environment} of the Spring
  * {@code ApplicationContext}, at which point all command line arguments become available
  * through the {@link Environment#getProperty(String)} family of methods. For example:
+ *
+ *
+ *  目的：将main方法的args参数（读取命令行参数）注入到Spring beans中，
+ *  可以通过ApplicationContext的Environment的getProperty(String)方法获取属性值
+ *
+ * 示例：
  *
  * <pre class="code">
  * public static void main(String[] args) {
@@ -97,7 +106,7 @@ import org.springframework.util.StringUtils;
  *     // ...
  * }</pre>
  *
- * <h3>Working with option arguments</h3>
+ * <h3>Working with option arguments 选项参数</h3>
  *
  * <p>Individual command line arguments are represented as properties through the usual
  * {@link PropertySource#getProperty(String)} and
@@ -129,7 +138,7 @@ import org.springframework.util.StringUtils;
  * example, a JOpt- or Commons CLI-based implementation may allow for single dash ("-")
  * "short" option arguments, etc.
  *
- * <h3>Working with non-option arguments</h3>
+ * <h3>Working with non-option arguments 非选项参数</h3>
  *
  * <p>Non-option arguments are also supported through this abstraction. Any arguments
  * supplied without an option-style prefix such as "-" or "--" are considered "non-option
@@ -207,9 +216,11 @@ import org.springframework.util.StringUtils;
 public abstract class CommandLinePropertySource<T> extends EnumerablePropertySource<T> {
 
 	/** The default name given to {@link CommandLinePropertySource} instances: {@value} */
+	/** 命令行参数资源名称*/
 	public static final String COMMAND_LINE_PROPERTY_SOURCE_NAME = "commandLineArgs";
 
 	/** The default name of the property representing non-option arguments: {@value} */
+	/** 非选项参数名称*/
 	public static final String DEFAULT_NON_OPTION_ARGS_PROPERTY_NAME = "nonOptionArgs";
 
 
