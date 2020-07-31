@@ -43,11 +43,13 @@ import org.springframework.lang.Nullable;
 /**
  * Delegate for AbstractApplicationContext's post-processor handling.
  *
+ *
  * @author Juergen Hoeller
  * @since 4.0
  */
 final class PostProcessorRegistrationDelegate {
 
+	// refresh()中会调用
 	public static void invokeBeanFactoryPostProcessors(
 			ConfigurableListableBeanFactory beanFactory, List<BeanFactoryPostProcessor> beanFactoryPostProcessors) {
 
@@ -56,21 +58,28 @@ final class PostProcessorRegistrationDelegate {
 
 		if (beanFactory instanceof BeanDefinitionRegistry) {
 			BeanDefinitionRegistry registry = (BeanDefinitionRegistry) beanFactory;
+
+			// --------- 调用 ApplicationContext中的 BeanDefinitionRegistryPostProcessor
 			List<BeanFactoryPostProcessor> regularPostProcessors = new ArrayList<>();
 			List<BeanDefinitionRegistryPostProcessor> registryProcessors = new ArrayList<>();
 
 			for (BeanFactoryPostProcessor postProcessor : beanFactoryPostProcessors) {
 				if (postProcessor instanceof BeanDefinitionRegistryPostProcessor) {
-					BeanDefinitionRegistryPostProcessor registryProcessor =
-							(BeanDefinitionRegistryPostProcessor) postProcessor;
+
+					BeanDefinitionRegistryPostProcessor registryProcessor = (BeanDefinitionRegistryPostProcessor) postProcessor;
+					// 添加额外的BeanDefinition
 					registryProcessor.postProcessBeanDefinitionRegistry(registry);
+
 					registryProcessors.add(registryProcessor);
 				}
 				else {
 					regularPostProcessors.add(postProcessor);
 				}
 			}
+			// -----------
 
+
+			// -------- 调用 BeanFactory中的 BeanDefinitionRegistryPostProcessor
 			// Do not initialize FactoryBeans here: We need to leave all regular beans
 			// uninitialized to let the bean factory post-processors apply to them!
 			// Separate between BeanDefinitionRegistryPostProcessors that implement
@@ -121,7 +130,9 @@ final class PostProcessorRegistrationDelegate {
 				invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
 				currentRegistryProcessors.clear();
 			}
+			// ------------------
 
+			// --------- 调用 BeanFactoryPostProcessors
 			// Now, invoke the postProcessBeanFactory callback of all processors handled so far.
 			invokeBeanFactoryPostProcessors(registryProcessors, beanFactory);
 			invokeBeanFactoryPostProcessors(regularPostProcessors, beanFactory);
@@ -181,6 +192,11 @@ final class PostProcessorRegistrationDelegate {
 		beanFactory.clearMetadataCache();
 	}
 
+	/**
+	 * 从 BeanDefinition中创建 BeanPostProcessor 并添加到 beanFactory#beanPostProcessor 属性中
+	 * @param beanFactory
+	 * @param applicationContext
+	 */
 	public static void registerBeanPostProcessors(
 			ConfigurableListableBeanFactory beanFactory, AbstractApplicationContext applicationContext) {
 
